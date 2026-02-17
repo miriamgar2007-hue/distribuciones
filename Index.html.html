@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía Simplificada - Distribuciones Discretas</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #e3f2fd;
+    --blue: #1976d2;
+    --blue-light: #42a5f5;
+    --blue-dark: #0d47a1;
+    --green: #4caf50;
+    --green-light: #81c784;
+    --orange: #ff9800;
+    --red: #e57373;
+    --purple: #9c27b0;
+    --paper: #fafafa;
+    --white: #ffffff;
+    --gray: #757575;
+    --gray-light: #e0e0e0;
+    --shadow: rgba(0,0,0,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Quicksand', sans-serif;
+    background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+    color: #333;
+    line-height: 1.7;
+    padding: 20px;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+    color: white;
+    padding: 50px 40px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 40px var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '📊';
+    position: absolute;
+    font-size: 180px;
+    opacity: 0.1;
+    right: -30px;
+    top: -30px;
+  }
+  .header h1 {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+  }
+  .header p {
+    font-size: 1.1rem;
+    opacity: 0.95;
+  }
+
+  /* NAV */
+  .nav {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+  .nav-btn {
+    flex: 1;
+    min-width: 150px;
+    padding: 15px 20px;
+    background: white;
+    border: 3px solid var(--blue);
+    border-radius: 12px;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1rem;
+    color: var(--blue-dark);
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px var(--shadow);
+  }
+  .nav-btn:hover {
+    background: var(--blue);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--shadow);
+  }
+  .nav-btn.active {
+    background: var(--blue);
+    color: white;
+  }
+
+  /* SECTION */
+  .section {
+    display: none;
+    animation: slideIn 0.5s ease;
+  }
+  .section.active { display: block; }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* CARD */
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: 35px;
+    margin-bottom: 25px;
+    box-shadow: 0 6px 25px var(--shadow);
+    border-left: 6px solid var(--blue);
+  }
+  .card.green { border-left-color: var(--green); }
+  .card.orange { border-left-color: var(--orange); }
+  .card.purple { border-left-color: var(--purple); }
+
+  .card-title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.8rem;
+    color: var(--blue-dark);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .card-title .emoji { font-size: 2rem; }
+
+  .card h3 {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.3rem;
+    color: var(--blue);
+    margin: 25px 0 12px;
+  }
+
+  /* CONCEPT BOX */
+  .concept {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px;
+    padding: 20px 25px;
+    margin: 20px 0;
+    border: 2px solid var(--blue-light);
+  }
+  .concept-label {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: var(--blue-dark);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  /* FORMULA BOX */
+  .formula {
+    background: linear-gradient(135deg, #1976d2, #0d47a1);
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    margin: 25px 0;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(25, 118, 210, 0.3);
+  }
+  .formula-main {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+  }
+  .formula-explain {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    line-height: 1.8;
+  }
+
+  /* SYMBOL EXPLAIN */
+  .symbols {
+    background: #fff3e0;
+    border-radius: 12px;
+    padding: 20px 25px;
+    margin: 20px 0;
+    border: 2px solid var(--orange);
+  }
+  .symbol-title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.1rem;
+    color: var(--orange);
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+  .symbol-row {
+    display: flex;
+    align-items: baseline;
+    margin: 8px 0;
+    gap: 10px;
+  }
+  .symbol-var {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.3rem;
+    color: var(--blue-dark);
+    font-weight: 700;
+    min-width: 50px;
+  }
+  .symbol-desc {
+    flex: 1;
+    color: #555;
+  }
+
+  /* STEP BY STEP */
+  .steps {
+    margin: 25px 0;
+  }
+  .step {
+    background: white;
+    border-left: 4px solid var(--green);
+    border-radius: 8px;
+    padding: 20px 25px;
+    margin: 15px 0;
+    box-shadow: 0 3px 12px var(--shadow);
+  }
+  .step-num {
+    font-family: 'Fredoka', sans-serif;
+    color: var(--green);
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .step-calc {
+    background: #f5f5f5;
+    padding: 12px 18px;
+    border-radius: 6px;
+    margin: 10px 0;
+    font-family: monospace;
+    font-size: 1rem;
+  }
+  .step-result {
+    background: linear-gradient(135deg, #4caf50, #66bb6a);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-top: 12px;
+    font-weight: 600;
+  }
+  .step-interpret {
+    background: #e8f5e9;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-top: 12px;
+    border-left: 3px solid var(--green);
+    color: #2e7d32;
+  }
+  .interpret-icon::before {
+    content: '💡 ';
+    font-size: 1.2rem;
+  }
+
+  /* HIGHLIGHT */
+  .highlight {
+    background: #fff9c4;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    color: #f57f17;
+  }
+
+  .tip {
+    background: #f3e5f5;
+    border-left: 4px solid var(--purple);
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    color: #4a148c;
+  }
+  .tip::before {
+    content: '💡 TIP: ';
+    font-weight: 700;
+  }
+
+  /* CALCULATOR */
+  .calc {
+    background: linear-gradient(135deg, #fff, #f5f5f5);
+    border-radius: 16px;
+    padding: 30px;
+    margin: 30px 0;
+    box-shadow: 0 8px 30px var(--shadow);
+    border: 3px solid var(--blue-light);
+  }
+  .calc-title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.5rem;
+    color: var(--blue-dark);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .calc-field {
+    margin: 15px 0;
+  }
+  .calc-field label {
+    display: block;
+    font-weight: 600;
+    color: var(--blue-dark);
+    margin-bottom: 6px;
+  }
+  .calc-field input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--gray-light);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border 0.3s;
+  }
+  .calc-field input:focus {
+    outline: none;
+    border-color: var(--blue);
+  }
+  .calc-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, var(--blue), var(--blue-light));
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: transform 0.2s;
+    box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+  }
+  .calc-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
+  }
+  .calc-result {
+    background: white;
+    border: 2px solid var(--green);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    min-height: 60px;
+    font-size: 1.05rem;
+    line-height: 1.8;
+  }
+  .result-highlight {
+    font-size: 1.4rem;
+    color: var(--green);
+    font-weight: 700;
+  }
+
+  strong { font-weight: 700; color: var(--blue-dark); }
+  em { font-style: italic; color: var(--blue); }
+
+  @media (max-width: 600px) {
+    body { padding: 10px; }
+    .header { padding: 30px 20px; }
+    .header h1 { font-size: 2rem; }
+    .card { padding: 25px 20px; }
+    .nav-btn { min-width: 120px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- HEADER -->
+  <div class="header">
+    <h1>Distribuciones Discretas de Probabilidad</h1>
+    <p style="margin-bottom: 15px;">Explicadas paso a paso</p>
+    <p style="font-size: 0.95rem; opacity: 0.9;">Indrid Icela Garcia Cervantes · Erik de Jesús Cortes Pacheco<br>Miriam Paola Garduño Cadena · Suri Itandehui Barbosa Ramirez</p>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav">
+    <button class="nav-btn active" onclick="showSection('intro', this)">🎯 Introducción</button>
+    <button class="nav-btn" onclick="showSection('binomial', this)">🎲 Binomial</button>
+    <button class="nav-btn" onclick="showSection('hiper', this)">🔄 Hipergeométrica</button>
+    <button class="nav-btn" onclick="showSection('poisson', this)">⚡ Poisson</button>
+  </div>
+
+  <!-- =================== INTRODUCCIÓN =================== -->
+  <div id="intro" class="section active">
+    
+    <div class="card">
+      <div class="card-title">
+        <span class="emoji">🎯</span>
+        <span>¿Qué es una Variable Aleatoria Discreta?</span>
+      </div>
+
+      <p>Imagina que estás jugando un juego donde lanzas una moneda 3 veces. ¿Cuántas caras puedes obtener? Puedes obtener 0, 1, 2 o 3 caras. Estos números (0, 1, 2, 3) son <span class="highlight">valores contables y separados</span>.</p>
+
+      <div class="concept">
+        <div class="concept-label">📖 Definición Simple</div>
+        Una <strong>variable aleatoria discreta</strong> es algo que podemos contar, como número de estudiantes, número de errores, número de clics. NO puede ser algo continuo como altura o temperatura.
+      </div>
+
+      <h3>Ejemplo 1: Lanzar una Moneda 2 Veces</h3>
+      
+      <p>Vamos a definir: <strong>X = número de caras obtenidas</strong></p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">📝 PASO 1: Listar todos los resultados posibles</div>
+          <p>Al lanzar 2 monedas, los resultados posibles son:</p>
+          <div class="step-calc">
+            Resultado 1: Cara-Cara (CC) → 2 caras<br>
+            Resultado 2: Cara-Cruz (CS) → 1 cara<br>
+            Resultado 3: Cruz-Cara (SC) → 1 cara<br>
+            Resultado 4: Cruz-Cruz (SS) → 0 caras
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">📊 PASO 2: Contar cuántas veces sale cada valor</div>
+          <div class="step-calc">
+            X = 0 caras → Sale 1 vez (SS)<br>
+            X = 1 cara → Sale 2 veces (CS, SC)<br>
+            X = 2 caras → Sale 1 vez (CC)
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">🎲 PASO 3: Calcular las probabilidades</div>
+          <p>Como hay 4 resultados posibles y todos son igualmente probables:</p>
+          <div class="step-calc">
+            P(X = 0) = 1/4 = 0.25 = 25%<br>
+            P(X = 1) = 2/4 = 0.50 = 50%<br>
+            P(X = 2) = 1/4 = 0.25 = 25%
+          </div>
+          <div class="step-result">
+            ✓ Verificación: 0.25 + 0.50 + 0.25 = 1.00 (100%)
+          </div>
+          <div class="step-interpret">
+            <span class="interpret-icon"></span><strong>Interpretación:</strong> La mitad de las veces (50%) obtendremos exactamente 1 cara. Solo el 25% de las veces obtendremos 2 caras o 0 caras.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">📈 PASO 4: Calcular el promedio esperado (Media)</div>
+          <p>La media nos dice qué valor esperamos obtener "en promedio":</p>
+          
+          <div class="symbols">
+            <div class="symbol-title">🔤 Significado de los símbolos:</div>
+            <div class="symbol-row">
+              <span class="symbol-var">μ</span>
+              <span class="symbol-desc">(mu) = Media o promedio esperado</span>
+            </div>
+            <div class="symbol-row">
+              <span class="symbol-var">E[X]</span>
+              <span class="symbol-desc">= Esperanza de X (otro nombre para la media)</span>
+            </div>
+            <div class="symbol-row">
+              <span class="symbol-var">Σ</span>
+              <span class="symbol-desc">(sigma mayúscula) = Sumar todo</span>
+            </div>
+            <div class="symbol-row">
+              <span class="symbol-var">·</span>
+              <span class="symbol-desc">= Multiplicación</span>
+            </div>
+          </div>
+
+          <div class="step-calc">
+            μ = E[X] = Σ (valor × probabilidad)<br>
+            μ = (0 × 0.25) + (1 × 0.50) + (2 × 0.25)<br>
+            μ = 0 + 0.50 + 0.50<br>
+            μ = 1.0
+          </div>
+          <div class="step-result">
+            Media = 1.0 cara
+          </div>
+          <div class="step-interpret">
+            <span class="interpret-icon"></span><strong>Interpretación:</strong> Si lanzas 2 monedas muchas veces, en promedio obtendrás 1 cara por lanzamiento. Esto tiene sentido: ¡es justo la mitad!
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">📏 PASO 5: Calcular la variabilidad (Varianza)</div>
+          <p>La varianza nos dice qué tan dispersos están los valores:</p>
+
+          <div class="symbols">
+            <div class="symbol-title">🔤 Significado de los símbolos:</div>
+            <div class="symbol-row">
+              <span class="symbol-var">σ²</span>
+              <span class="symbol-desc">(sigma al cuadrado) = Varianza</span>
+            </div>
+            <div class="symbol-row">
+              <span class="symbol-var">(X−μ)²</span>
+              <span class="symbol-desc">= Distancia al cuadrado de cada valor respecto a la media</span>
+            </div>
+          </div>
+
+          <div class="step-calc">
+            σ² = Σ (valor − media)² × probabilidad<br>
+            σ² = (0−1)² × 0.25 + (1−1)² × 0.50 + (2−1)² × 0.25<br>
+            σ² = (1 × 0.25) + (0 × 0.50) + (1 × 0.25)<br>
+            σ² = 0.25 + 0 + 0.25<br>
+            σ² = 0.50
+          </div>
+
+          <p>La <strong>desviación estándar</strong> (σ) es la raíz cuadrada de la varianza:</p>
+          <div class="step-calc">
+            σ = √0.50 ≈ 0.707
+          </div>
+          <div class="step-result">
+            Varianza = 0.50 | Desviación estándar = 0.707
+          </div>
+          <div class="step-interpret">
+            <span class="interpret-icon"></span><strong>Interpretación:</strong> Los valores típicamente se alejan ±0.707 de la media (1.0). Esto significa que los resultados varían moderadamente, no están todos concentrados en un solo valor.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- =================== BINOMIAL =================== -->
+  <div id="binomial" class="section">
+    
+    <div class="card green">
+      <div class="card-title">
+        <span class="emoji">🎲</span>
+        <span>Distribución Binomial</span>
+      </div>
+
+      <div class="concept">
+        <div class="concept-label">🎯 ¿Cuándo usar Binomial?</div>
+        Úsala cuando:<br>
+        • Repites algo <strong>un número fijo de veces</strong> (n)<br>
+        • Cada vez solo hay <strong>dos resultados posibles</strong>: éxito o fracaso<br>
+        • La probabilidad de éxito <strong>NO cambia</strong> (es siempre la misma p)<br>
+        • Los intentos son <strong>independientes</strong> (uno no afecta al otro)
+      </div>
+
+      <h3>Ejemplo Sencillo: Examen de Opción Múltiple</h3>
+
+      <p><strong>Situación:</strong> Un estudiante responde al azar un examen de 5 preguntas. Cada pregunta tiene 4 opciones (A, B, C, D), solo una correcta.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">📋 PASO 1: Identificar los parámetros</div>
+          
+          <div class="symbols">
+            <div class="symbol-title">🔤 Símbolos de la Binomial:</div>
+            <div class="symbol-row">
+              <span class="symbol-var">n</span>
+              <span class="symbol-desc">= Número de intentos (preguntas) = <strong>5</strong></span>
+            </div>
+            <div class="symbol-row">
+              <span class="symbol-var">p</span>
+              <span class="symbol-desc">= Probabilidad de éxito en cada intento = 1/4 = <strong>0.25</strong></span>
+            </div>
+            <div class="symbol-row">
+              <span class="symbol-var">k</span>
+              <span class="symbol-desc">= Número de éxitos que queremos calcular</span>
+            </div>
+            <div class="symbol-row">
+              <span class="symbol-var">X</span>
+              <span class="symbol-desc">= Variable aleatoria = "número de respuestas correctas"</span>
+            </div>
+          </div>
+
+          <div class="tip">
+            ¿Por qué p = 0.25? Porque hay 4 opciones y solo 1 es correcta, entonces la probabilidad de acertar al azar es 1÷4 = 0.25.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">🔢 PASO 2: Escribir la fórmula</div>
+          
+          <div class="formula">
+            <div class="formula-main">P(X = k) = C(n,k) × p<sup>k</sup> × (1−p)<sup>n−k</sup></div>
+            <div class="formula-explain">
+              Esta fórmula nos dice: ¿Cuál es la probabilidad de acertar exactamente k preguntas?
+            </div>
+          </div>
+
+          <div class="symbols">
+            <div class="symbol-title">🔤 Desglose de la fórmula:</div>
+            <div class="symbol-row">
+              <span class="symbol-var">C(n,k)</span>
+              <span class="symbol-desc">= Combinaciones: formas de elegir k éxitos entre n intentos<br>
+              Se calcula: C(n,k) = n! ÷ (k! × (n−k)!)</span>
+            </div>
+            <div class="symbol-row">
+              <span class="symbol-var">p<sup>k</sup></span>
+              <span class="symbol-desc">= Probabilidad de k éxitos (p multiplicado k veces)</span>
+            </div>
+            <div class="symbol-row">
+              <span class="symbol-var">(1−p)<sup>n−k</sup></span>
+              <span class="symbol-desc">= Probabilidad de (n−k) fracasos</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">💻 PASO 3: Calcular P(X = 2) — ¿Acertar exactamente 2 preguntas?</div>
+
+          <p><strong>Primero calculamos C(5,2):</strong></p>
+          <div class="step-calc">
+            C(5,2) = 5! ÷ (2! × 3!)<br>
+            5! = 5 × 4 × 3 × 2 × 1 = 120<br>
+            2! = 2 × 1 = 2<br>
+            3! = 3 × 2 × 1 = 6<br>
+            C(5,2) = 120 ÷ (2 × 6) = 120 ÷ 12 = <strong>10</strong>
+          </div>
+          <div class="step-interpret">
+            <span class="interpret-icon"></span>Hay <strong>10 formas diferentes</strong> de acertar exactamente 2 de 5 preguntas. Por ejemplo: acertar 1ra y 2da, o acertar 1ra y 3ra, etc.
+          </div>
+
+          <p><strong>Ahora calculamos toda la probabilidad:</strong></p>
+          <div class="step-calc">
+            P(X=2) = C(5,2) × (0.25)² × (0.75)³<br>
+            P(X=2) = 10 × 0.0625 × 0.4219<br>
+            P(X=2) = 10 × 0.0264<br>
+            P(X=2) = 0.2637
+          </div>
+          <div class="step-result">
+            P(X = 2) = 0.2637 = <span class="result-highlight">26.37%</span>
+          </div>
+          <div class="step-interpret">
+            <span class="interpret-icon"></span><strong>Interpretación:</strong> Si un estudiante responde al azar, hay aproximadamente un 26% de probabilidad de que acierte exactamente 2 preguntas de 5. Es decir, 1 de cada 4 estudiantes que respondan al azar acertaría exactamente 2.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">📊 PASO 4: Calcular la media (¿cuántas esperamos acertar?)</div>
+
+          <div class="formula">
+            <div class="formula-main">μ = n × p</div>
+          </div>
+
+          <div class="step-calc">
+            μ = 5 × 0.25 = 1.25 preguntas
+          </div>
+          <div class="step-result">
+            En promedio, se aciertan 1.25 preguntas
+          </div>
+          <div class="step-interpret">
+            <span class="interpret-icon"></span><strong>Interpretación:</strong> Si muchos estudiantes responden al azar este examen, en promedio cada uno acertará entre 1 y 2 preguntas. La mayoría acertará 1 o 2, rara vez más.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALCULADORA BINOMIAL -->
+    <div class="calc">
+      <div class="calc-title">🧮 Calculadora Binomial Interactiva</div>
+      <div class="calc-field">
+        <label>n — Número de intentos (preguntas, lanzamientos, etc.)</label>
+        <input type="number" id="bin-n" value="5" min="1" max="30">
+      </div>
+      <div class="calc-field">
+        <label>p — Probabilidad de éxito (entre 0 y 1)</label>
+        <input type="number" id="bin-p" value="0.25" min="0" max="1" step="0.01">
+      </div>
+      <div class="calc-field">
+        <label>k — Número de éxitos que quieres calcular</label>
+        <input type="number" id="bin-k" value="2" min="0">
+      </div>
+      <button class="calc-btn" onclick="calcBinomial()">Calcular Probabilidad</button>
+      <div class="calc-result" id="bin-result">
+        👆 Ingresa los valores y presiona el botón para calcular
+      </div>
+    </div>
+
+  </div>
+
+  <!-- =================== HIPERGEOMÉTRICA =================== -->
+  <div id="hiper" class="section">
+    
+    <div class="card orange">
+      <div class="card-title">
+        <span class="emoji">🔄</span>
+        <span>Distribución Hipergeométrica</span>
+      </div>
+
+      <div class="concept">
+        <div class="concept-label">🎯 ¿Cuándo usar Hipergeométrica?</div>
+        Úsala cuando:<br>
+        • Tienes una <strong>población finita y pequeña</strong><br>
+        • Sacas elementos <strong>sin devolverlos</strong> (sin reemplazo)<br>
+        • Quieres saber cuántos "éxitos" obtendrás en tu muestra<br>
+        <br>
+        <strong>Diferencia con Binomial:</strong> En Binomial devuelves el elemento (probabilidad NO cambia). En Hipergeométrica NO lo devuelves (probabilidad SÍ cambia).
+      </div>
+
+      <h3>Ejemplo Sencillo: Bolsa de Caramelos</h3>
+
+      <p><strong>Situación:</strong> Tienes una bolsa con 20 caramelos: 8 rojos y 12 azules. Sacas 5 caramelos sin mirar y SIN devolverlos. ¿Cuál es la probabilidad de sacar exactamente 3 rojos?</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">📋 PASO 1: Identificar los parámetros</div>
+          
+          <div class="symbols">
+            <div class="symbol-title">🔤 Símbolos de la Hipergeométrica:</div>
+            <div class="symbol-row">
+              <span class="symbol-var">N</span>
+              <span class="symbol-desc">= Población total = 20 caramelos (8 rojos + 12 azules)</span>
+            </div>
+            <div class="symbol-row">
+              <span class="symbol-var">K</span>
+              <span class="symbol-desc">= Éxitos en la población = 8 caramelos rojos</span>
+            </div>
+            <div class="symbol-row">
+              <span class="symbol-var">n</span>
+              <span class="symbol-desc">= Tamaño de la muestra = 5 caramelos que sacamos</span>
+            </div>
+            <div class="symbol-row">
+              <span class="symbol-var">k</span>
+              <span class="symbol-desc">= Éxitos buscados en la muestra = 3 rojos</span>
+            </div>
+          </div>
+
+          <div class="tip">
+            Recuerda: K (mayúscula) es en toda la población, k (minúscula) es en tu muestra.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">🔢 PASO 2: Escribir la fórmula</div>
+          
+          <div class="formula">
+            <div class="formula-main">P(X = k) = [C(K,k) × C(N−K, n−k)] ÷ C(N,n)</div>
+            <div class="formula-explain">
+              Esta fórmula dice: De todas las formas de sacar n elementos,<br>
+              ¿en cuántas obtenemos exactamente k del tipo que buscamos?
+            </div>
+          </div>
+
+          <div class="symbols">
+            <div class="symbol-title">🔤 Desglose de la fórmula:</div>
+            <div class="symbol-row">
+              <span class="symbol-var">C(K,k)</span>
+              <span class="symbol-desc">= Formas de elegir k rojos de los K rojos disponibles</span>
+            </div>
+            <div class="symbol-row">
+              <span class="symbol-var">C(N−K, n−k)</span>
+              <span class="symbol-desc">= Formas de elegir (n−k) azules de los (N−K) azules disponibles</span>
+            </div>
+            <div class="symbol-row">
+              <span class="symbol-var">C(N,n)</span>
+              <span class="symbol-desc">= Total de formas de elegir n caramelos de N</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">💻 PASO 3: Calcular paso por paso</div>
+
+          <p><strong>Para nuestro problema: N=20, K=8, n=5, k=3</strong></p>
+
+          <p>🔸 <strong>Paso 3.1:</strong> C(8,3) — formas de elegir 3 rojos de 8</p>
+          <div class="step-calc">
+            C(8,3) = 8! ÷ (3! × 5!)<br>
+            C(8,3) = (8×7×6) ÷ (3×2×1) = 336 ÷ 6 = <strong>56</strong>
+          </div>
+          <div class="step-interpret">
+            <span class="interpret-icon"></span>Hay <strong>56 formas</strong> de elegir 3 caramelos rojos de los 8 disponibles.
+          </div>
+
+          <p>🔸 <strong>Paso 3.2:</strong> C(12,2) — formas de elegir 2 azules de 12</p>
+          <p style="color: #666; margin-bottom: 8px;"><em>(Si saco 3 rojos de 5, entonces los otros 2 deben ser azules)</em></p>
+          <div class="step-calc">
+            C(12,2) = 12! ÷ (2! × 10!)<br>
+            C(12,2) = (12×11) ÷ (2×1) = 132 ÷ 2 = <strong>66</strong>
+          </div>
+          <div class="step-interpret">
+            <span class="interpret-icon"></span>Hay <strong>66 formas</strong> de elegir 2 caramelos azules de los 12 disponibles.
+          </div>
+
+          <p>🔸 <strong>Paso 3.3:</strong> C(20,5) — total de formas de elegir 5 de 20</p>
+          <div class="step-calc">
+            C(20,5) = 20! ÷ (5! × 15!)<br>
+            C(20,5) = (20×19×18×17×16) ÷ (5×4×3×2×1)<br>
+            C(20,5) = 1860480 ÷ 120 = <strong>15504</strong>
+          </div>
+          <div class="step-interpret">
+            <span class="interpret-icon"></span>Hay <strong>15,504 formas diferentes</strong> de elegir 5 caramelos de 20.
+          </div>
+
+          <p>🔸 <strong>Paso 3.4:</strong> Juntar todo</p>
+          <div class="step-calc">
+            P(X=3) = [C(8,3) × C(12,2)] ÷ C(20,5)<br>
+            P(X=3) = (56 × 66) ÷ 15504<br>
+            P(X=3) = 3696 ÷ 15504<br>
+            P(X=3) = 0.2384
+          </div>
+          <div class="step-result">
+            P(X = 3) = 0.2384 = <span class="result-highlight">23.84%</span>
+          </div>
+          <div class="step-interpret">
+            <span class="interpret-icon"></span><strong>Interpretación:</strong> Si sacas 5 caramelos sin ver, hay casi 1 de cada 4 probabilidades (≈24%) de que exactamente 3 sean rojos y 2 sean azules.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">📊 PASO 4: Calcular cuántos rojos esperamos sacar</div>
+
+          <div class="formula">
+            <div class="formula-main">μ = n × (K÷N)</div>
+            <div class="formula-explain">
+              Media = tamaño muestra × proporción de éxitos en población
+            </div>
+          </div>
+
+          <div class="step-calc">
+            μ = 5 × (8÷20)<br>
+            μ = 5 × 0.40<br>
+            μ = 2.0 caramelos rojos
+          </div>
+          <div class="step-result">
+            En promedio, sacamos 2 caramelos rojos
+          </div>
+          <div class="step-interpret">
+            <span class="interpret-icon"></span><strong>Interpretación:</strong> Si repites este experimento muchas veces, en promedio sacarás 2 caramelos rojos de cada 5. Esto tiene sentido porque los rojos son el 40% del total (8/20), y el 40% de 5 es 2.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALCULADORA HIPERGEOMÉTRICA -->
+    <div class="calc">
+      <div class="calc-title">🧮 Calculadora Hipergeométrica Interactiva</div>
+      <div class="calc-field">
+        <label>N — Población total (todos los elementos)</label>
+        <input type="number" id="hiper-N" value="20" min="1">
+      </div>
+      <div class="calc-field">
+        <label>K — Éxitos en la población (elementos del tipo que buscamos)</label>
+        <input type="number" id="hiper-K" value="8" min="0">
+      </div>
+      <div class="calc-field">
+        <label>n — Tamaño de la muestra (cuántos sacamos)</label>
+        <input type="number" id="hiper-n" value="5" min="1">
+      </div>
+      <div class="calc-field">
+        <label>k — Éxitos en la muestra (cuántos del tipo buscado queremos)</label>
+        <input type="number" id="hiper-k" value="3" min="0">
+      </div>
+      <button class="calc-btn" onclick="calcHiper()">Calcular Probabilidad</button>
+      <div class="calc-result" id="hiper-result">
+        👆 Ingresa los valores y presiona el botón para calcular
+      </div>
+    </div>
+
+  </div>
+
+  <!-- =================== POISSON =================== -->
+  <div id="poisson" class="section">
+    
+    <div class="card purple">
+      <div class="card-title">
+        <span class="emoji">⚡</span>
+        <span>Distribución de Poisson</span>
+      </div>
+
+      <div class="concept">
+        <div class="concept-label">🎯 ¿Cuándo usar Poisson?</div>
+        Úsala cuando:<br>
+        • Cuentas eventos que ocurren en un <strong>intervalo de tiempo o espacio</strong><br>
+        • Los eventos son <strong>raros o poco frecuentes</strong><br>
+        • Los eventos ocurren de forma <strong>independiente</strong><br>
+        • Conoces el <strong>promedio de eventos</strong> por intervalo (λ)<br>
+        <br>
+        <strong>Ejemplos:</strong> llamadas por hora, errores por página, visitas por día
+      </div>
+
+      <h3>Ejemplo Sencillo: Mensajes en un Chat</h3>
+
+      <p><strong>Situación:</strong> Un grupo de WhatsApp recibe en promedio 3 mensajes por minuto. ¿Cuál es la probabilidad de recibir exactamente 5 mensajes en el próximo minuto?</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">📋 PASO 1: Identificar los parámetros</div>
+          
+          <div class="symbols">
+            <div class="symbol-title">🔤 Símbolos de Poisson:</div>
+            <div class="symbol-row">
+              <span class="symbol-var">λ</span>
+              <span class="symbol-desc">(lambda) = Promedio de eventos por intervalo = <strong>3 mensajes/minuto</strong></span>
+            </div>
+            <div class="symbol-row">
+              <span class="symbol-var">k</span>
+              <span class="symbol-desc">= Número de eventos que queremos calcular = <strong>5 mensajes</strong></span>
+            </div>
+            <div class="symbol-row">
+              <span class="symbol-var">e</span>
+              <span class="symbol-desc">= Número de Euler ≈ 2.71828 (constante matemática)</span>
+            </div>
+          </div>
+
+          <div class="tip">
+            λ (lambda) siempre debe estar en la misma unidad de tiempo que tu pregunta. Si λ es por minuto, tu pregunta debe ser sobre minutos. Si es por hora, debe ser sobre horas.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">🔢 PASO 2: Escribir la fórmula</div>
+          
+          <div class="formula">
+            <div class="formula-main">P(X = k) = (e<sup>−λ</sup> × λ<sup>k</sup>) ÷ k!</div>
+            <div class="formula-explain">
+              Esta fórmula calcula: ¿Cuál es la probabilidad de que ocurran exactamente k eventos<br>
+              cuando el promedio es λ?
+            </div>
+          </div>
+
+          <div class="symbols">
+            <div class="symbol-title">🔤 Desglose de la fórmula:</div>
+            <div class="symbol-row">
+              <span class="symbol-var">e<sup>−λ</sup></span>
+              <span class="symbol-desc">= e elevado a menos lambda (factor de normalización)</span>
+            </div>
+            <div class="symbol-row">
+              <span class="symbol-var">λ<sup>k</sup></span>
+              <span class="symbol-desc">= lambda elevado a la k (lambda multiplicado k veces)</span>
+            </div>
+            <div class="symbol-row">
+              <span class="symbol-var">k!</span>
+              <span class="symbol-desc">= k factorial = k × (k−1) × (k−2) × ... × 2 × 1</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">💻 PASO 3: Calcular paso por paso</div>
+
+          <p><strong>Para nuestro problema: λ=3, k=5</strong></p>
+
+          <p>🔸 <strong>Paso 3.1:</strong> Calcular e<sup>−λ</sup></p>
+          <div class="step-calc">
+            e<sup>−3</sup> = 1 ÷ e<sup>3</sup><br>
+            e ≈ 2.71828<br>
+            e³ ≈ 20.0855<br>
+            e<sup>−3</sup> ≈ 1 ÷ 20.0855 ≈ <strong>0.04979</strong>
+          </div>
+
+          <p>🔸 <strong>Paso 3.2:</strong> Calcular λ<sup>k</sup></p>
+          <div class="step-calc">
+            λ<sup>k</sup> = 3⁵<br>
+            3⁵ = 3 × 3 × 3 × 3 × 3 = <strong>243</strong>
+          </div>
+
+          <p>🔸 <strong>Paso 3.3:</strong> Calcular k!</p>
+          <div class="step-calc">
+            5! = 5 × 4 × 3 × 2 × 1 = <strong>120</strong>
+          </div>
+
+          <p>🔸 <strong>Paso 3.4:</strong> Juntar todo</p>
+          <div class="step-calc">
+            P(X=5) = (e<sup>−3</sup> × 3⁵) ÷ 5!<br>
+            P(X=5) = (0.04979 × 243) ÷ 120<br>
+            P(X=5) = 12.0987 ÷ 120<br>
+            P(X=5) = 0.1008
+          </div>
+          <div class="step-result">
+            P(X = 5) = 0.1008 = <span class="result-highlight">10.08%</span>
+          </div>
+          <div class="step-interpret">
+            <span class="interpret-icon"></span><strong>Interpretación:</strong> Hay aproximadamente 10% de probabilidad de recibir exactamente 5 mensajes en el próximo minuto. Es decir, 1 de cada 10 minutos veremos exactamente 5 mensajes. Es posible pero no muy común (el promedio es 3).
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">📊 PASO 4: Entender la media y varianza</div>
+
+          <div class="concept">
+            <div class="concept-label">✨ Propiedad especial de Poisson</div>
+            En Poisson, la <strong>media</strong> y la <strong>varianza</strong> son <strong>iguales</strong> y ambas valen λ.
+          </div>
+
+          <div class="step-calc">
+            Media (μ) = λ = 3 mensajes<br>
+            Varianza (σ²) = λ = 3<br>
+            Desviación estándar (σ) = √3 ≈ 1.73 mensajes
+          </div>
+          <div class="step-result">
+            Esperamos 3 mensajes ± 1.73
+          </div>
+          <div class="step-interpret">
+            <span class="interpret-icon"></span><strong>Interpretación:</strong> En promedio, este chat recibe 3 mensajes por minuto. La mayoría de los minutos tendrá entre 1 y 5 mensajes (3 ± 1.73). Rara vez habrá 0 mensajes o más de 6.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">🔄 PASO 5: Ajustar λ para diferentes intervalos</div>
+
+          <p>Si λ = 3 mensajes/minuto, podemos convertirlo:</p>
+          <div class="step-calc">
+            Por 30 segundos: λ = 3 × (30/60) = 3 × 0.5 = <strong>1.5 mensajes</strong><br>
+            Por 2 minutos: λ = 3 × 2 = <strong>6 mensajes</strong><br>
+            Por 1 hora: λ = 3 × 60 = <strong>180 mensajes</strong>
+          </div>
+          <div class="step-interpret">
+            <span class="interpret-icon"></span><strong>Clave:</strong> Siempre multiplica o divide λ proporcionalmente al intervalo que te interesa. Si el intervalo se duplica, λ se duplica. Si se reduce a la mitad, λ se reduce a la mitad.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALCULADORA POISSON -->
+    <div class="calc">
+      <div class="calc-title">🧮 Calculadora Poisson Interactiva</div>
+      <div class="calc-field">
+        <label>λ (lambda) — Promedio de eventos por intervalo</label>
+        <input type="number" id="pois-lambda" value="3" min="0.1" step="0.5">
+      </div>
+      <div class="calc-field">
+        <label>k — Número de eventos que quieres calcular</label>
+        <input type="number" id="pois-k" value="5" min="0">
+      </div>
+      <button class="calc-btn" onclick="calcPoisson()">Calcular Probabilidad</button>
+      <div class="calc-result" id="pois-result">
+        👆 Ingresa los valores y presiona el botón para calcular
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+// Navigation
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Math helpers
+function factorial(n) {
+  if (n <= 1) return 1;
+  let r = 1;
+  for (let i = 2; i <= n; i++) r *= i;
+  return r;
+}
+
+function comb(n, k) {
+  if (k < 0 || k > n) return 0;
+  if (k === 0 || k === n) return 1;
+  k = Math.min(k, n - k);
+  let r = 1;
+  for (let i = 0; i < k; i++) r = r * (n - i) / (i + 1);
+  return Math.round(r);
+}
+
+// Binomial Calculator
+function calcBinomial() {
+  const n = parseInt(document.getElementById('bin-n').value);
+  const p = parseFloat(document.getElementById('bin-p').value);
+  const k = parseInt(document.getElementById('bin-k').value);
+  const el = document.getElementById('bin-result');
+  
+  if (isNaN(n) || isNaN(p) || isNaN(k) || p < 0 || p > 1 || k > n || k < 0) {
+    el.innerHTML = '⚠️ Por favor verifica que los valores sean correctos:<br>• n debe ser mayor que 0<br>• p debe estar entre 0 y 1<br>• k debe estar entre 0 y n';
+    return;
+  }
+  
+  const combValue = comb(n, k);
+  const prob = combValue * Math.pow(p, k) * Math.pow(1-p, n-k);
+  const mean = n * p;
+  const variance = n * p * (1-p);
+  const sd = Math.sqrt(variance);
+  
+  el.innerHTML = `
+    <strong>📊 Resultados:</strong><br><br>
+    <span class="result-highlight">P(X = ${k}) = ${prob.toFixed(6)} = ${(prob*100).toFixed(2)}%</span><br><br>
+    <strong>Cálculo detallado:</strong><br>
+    • C(${n},${k}) = ${combValue} (combinaciones)<br>
+    • p<sup>${k}</sup> = ${Math.pow(p, k).toFixed(6)}<br>
+    • (1-p)<sup>${n-k}</sup> = ${Math.pow(1-p, n-k).toFixed(6)}<br><br>
+    <strong>Parámetros de la distribución:</strong><br>
+    • Media (μ) = ${mean.toFixed(3)}<br>
+    • Varianza (σ²) = ${variance.toFixed(3)}<br>
+    • Desviación estándar (σ) = ${sd.toFixed(3)}<br><br>
+    <span style="color: #4caf50;">💡 <strong>Interpretación:</strong> En ${n} intentos con probabilidad ${p} de éxito cada uno, hay ${(prob*100).toFixed(1)}% de probabilidad de obtener exactamente ${k} éxitos.</span>
+  `;
+}
+
+// Hipergeométrica Calculator
+function calcHiper() {
+  const N = parseInt(document.getElementById('hiper-N').value);
+  const K = parseInt(document.getElementById('hiper-K').value);
+  const n = parseInt(document.getElementById('hiper-n').value);
+  const k = parseInt(document.getElementById('hiper-k').value);
+  const el = document.getElementById('hiper-result');
+  
+  if (isNaN(N) || isNaN(K) || isNaN(n) || isNaN(k) || K > N || n > N || k > K || k > n || k < 0) {
+    el.innerHTML = '⚠️ Por favor verifica que:<br>• K ≤ N (éxitos en población no pueden exceder el total)<br>• n ≤ N (muestra no puede ser mayor que población)<br>• k ≤ K y k ≤ n';
+    return;
+  }
+  
+  const c1 = comb(K, k);
+  const c2 = comb(N-K, n-k);
+  const c3 = comb(N, n);
+  
+  if (c1 === 0 || c2 === 0 || c3 === 0) {
+    el.innerHTML = '⚠️ Los parámetros dados producen una combinación imposible. Verifica los valores.';
+    return;
+  }
+  
+  const prob = (c1 * c2) / c3;
+  const mean = n * (K / N);
+  const variance = n * (K/N) * (1 - K/N) * ((N-n)/(N-1));
+  
+  el.innerHTML = `
+    <strong>📊 Resultados:</strong><br><br>
+    <span class="result-highlight">P(X = ${k}) = ${prob.toFixed(6)} = ${(prob*100).toFixed(2)}%</span><br><br>
+    <strong>Cálculo detallado:</strong><br>
+    • C(${K},${k}) = ${c1} (formas de elegir ${k} éxitos de ${K})<br>
+    • C(${N-K},${n-k}) = ${c2} (formas de elegir ${n-k} fracasos de ${N-K})<br>
+    • C(${N},${n}) = ${c3} (total de formas de elegir ${n} de ${N})<br>
+    • Probabilidad = (${c1} × ${c2}) ÷ ${c3}<br><br>
+    <strong>Parámetros de la distribución:</strong><br>
+    • Media (μ) = ${mean.toFixed(3)}<br>
+    • Varianza (σ²) = ${variance.toFixed(3)}<br><br>
+    <span style="color: #ff9800;">💡 <strong>Interpretación:</strong> Al sacar ${n} elementos sin reemplazo de una población de ${N} (donde ${K} son éxitos), hay ${(prob*100).toFixed(1)}% de probabilidad de obtener exactamente ${k} éxitos.</span>
+  `;
+}
+
+// Poisson Calculator
+function calcPoisson() {
+  const lambda = parseFloat(document.getElementById('pois-lambda').value);
+  const k = parseInt(document.getElementById('pois-k').value);
+  const el = document.getElementById('pois-result');
+  
+  if (isNaN(lambda) || isNaN(k) || lambda <= 0 || k < 0) {
+    el.innerHTML = '⚠️ Por favor verifica que:<br>• λ (lambda) debe ser mayor que 0<br>• k debe ser mayor o igual a 0';
+    return;
+  }
+  
+  const prob = (Math.exp(-lambda) * Math.pow(lambda, k)) / factorial(k);
+  const sd = Math.sqrt(lambda);
+  
+  el.innerHTML = `
+    <strong>📊 Resultados:</strong><br><br>
+    <span class="result-highlight">P(X = ${k}) = ${prob.toFixed(6)} = ${(prob*100).toFixed(2)}%</span><br><br>
+    <strong>Cálculo detallado:</strong><br>
+    • e<sup>-λ</sup> = e<sup>-${lambda}</sup> = ${Math.exp(-lambda).toFixed(6)}<br>
+    • λ<sup>${k}</sup> = ${lambda}<sup>${k}</sup> = ${Math.pow(lambda, k).toFixed(6)}<br>
+    • ${k}! = ${factorial(k)}<br>
+    • Probabilidad = (${Math.exp(-lambda).toFixed(6)} × ${Math.pow(lambda, k).toFixed(6)}) ÷ ${factorial(k)}<br><br>
+    <strong>Parámetros de la distribución:</strong><br>
+    • Media (μ) = λ = ${lambda}<br>
+    • Varianza (σ²) = λ = ${lambda}<br>
+    • Desviación estándar (σ) = ${sd.toFixed(3)}<br><br>
+    <span style="color: #9c27b0;">💡 <strong>Interpretación:</strong> Con un promedio de ${lambda} eventos por intervalo, hay ${(prob*100).toFixed(1)}% de probabilidad de que ocurran exactamente ${k} eventos.</span>
+  `;
+}
+</script>
+</body>
+</html>
